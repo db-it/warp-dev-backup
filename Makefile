@@ -1,5 +1,4 @@
 PYTHON_DIST_NAME := warp-dev-backup
-PYTHON_PACKAGE_NAME := warp_dev_backup
 BINARY_FILES := bin/wdb
 
 COMMIT_ISH := $(shell git rev-parse --quiet --verify --short HEAD || echo "None")
@@ -54,11 +53,11 @@ test:
 
 .PHONY: cover
 cover:
-	$(PYTHON_BIN) -m pytest -c $(PYTEST_CONFIG_FILE) --cov=src/$(PYTHON_PACKAGE_NAME) tests/
+	$(PYTHON_BIN) -m pytest -c $(PYTEST_CONFIG_FILE) --cov=src tests/
 
 .PHONY: cover-html
 cover-html:
-	$(PYTHON_BIN) -m pytest -c $(PYTEST_CONFIG_FILE) --cov=src/$(PYTHON_PACKAGE_NAME) --cov-report=html tests/
+	$(PYTHON_BIN) -m pytest -c $(PYTEST_CONFIG_FILE) --cov=src --cov-report=html tests/
 
 .PHONY: clean
 clean:
