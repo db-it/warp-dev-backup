@@ -1,0 +1,52 @@
+[build-system]
+requires = ["setuptools", "setuptools-scm"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "warp-dev-backup"
+description = ""
+#version = "0.1.0"
+dynamic = ["version"]
+readme = "README.md"
+license = { file = "LICENSE" }
+authors = [
+    { name = "Dominik Büttner", email = "mail@db-it.de" }
+]
+maintainers = [
+    { name = "Dominik Büttner", email = "mail@db-it.de" }
+]
+
+dependencies = [
+    "humanize",
+    "pyyaml"
+]
+requires-python = ">= 3.8"
+
+#[project.urls]
+#Homepage = ""
+#Documentation = ""
+#Repository = ""
+#Issues = ""
+#Changelog = ""
+
+keywords = []
+
+# https://pypi.org/classifiers/
+classifiers = []
+
+[project.optional-dependencies]
+dev = [
+    'bump2version',
+    'coverage>=6',
+    'pytest>=7',
+    'pytest-cov>=4',
+    'pytest-cases>=3',
+]
+
+
+#[project.scripts]
+#spam-cli = "wapdevbackup:main_cli"
+
+#[tool.setuptools.dynamic]
+##version = { attr = "warp_dev_backup.__version__" }
+#version = { file = "VERSION" }
