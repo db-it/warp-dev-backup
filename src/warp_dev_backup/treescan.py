@@ -1,0 +1,11 @@
+import logging
+import os
+
+log = logging.getLogger(__name__)
+
+
+def scan_tree(context, start_path, exclusion_path_sentinels, callback):
+    for root, dirs, files in os.walk(start_path):
+        for item in exclusion_path_sentinels:
+            if item["sentinel"] in files and item["path"] in dirs:
+                callback(context, os.path.join(root, item["path"]), item)

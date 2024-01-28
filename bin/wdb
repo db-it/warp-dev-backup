@@ -1,0 +1,36 @@
+#!/usr/bin/env python3
+import sys
+from argparse import ArgumentParser
+
+import humanize
+
+from warp_dev_backup.main import scan, search, get_total_size_of_excluded_path, print_config
+
+
+def build_parser() -> ArgumentParser:
+    import argparse
+    argpar = argparse.ArgumentParser(description='Automatic exclusion of development paths from Time Machine backups')
+
+    argpar.add_argument('command', choices=['search', 'scan', 'size', 'config'], help="Command")
+    argpar.add_argument('--path', '-p', dest='start_path', help="Start path")
+
+    argpar.add_argument('-v', action='count', default=1, help='verbose level')
+    argpar.add_argument('-q', '--quiet', dest='quiet', action='store_true', default=False,
+                        help='Give no output. Has precedence over verbose.')
+    return argpar
+
+
+if __name__ == '__main__':
+    parser = build_parser()
+    args = parser.parse_args(sys.argv[1:])
+    if args.quiet:
+        args.v = 0
+
+    if args.command == 'search':
+        search(args, args.start_path)
+    elif args.command == 'scan':
+        scan(args.start_path, args)
+    elif args.command == 'size':
+        print(f'Total size of excluded paths: {humanize.naturalsize(get_total_size_of_excluded_path(), binary=True)}')
+    elif args.command == 'config':
+        print_config()
