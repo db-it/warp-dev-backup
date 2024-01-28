@@ -14,15 +14,14 @@ from warp_dev_backup.treescan import scan_tree
 log = logging.getLogger(__name__)
 
 
-def print_path_with_size(context, path, path_sentinel_pair):
-    path_size = os.path.getsize(path)
-    print(f"{path_size}\t{path}")
-    log.info(f"Found path: {path}, Bytes: {path_size}")
-
-
 def print_path(context, path, path_sentinel_pair):
-    print(path)
-    log.info(path)
+    if context.v > 0:
+        path_size = os.path.getsize(path)
+        print(f"{path_size}\t{path}")
+        log.info(f"Found path: {path}, Bytes: {path_size}")
+    else:
+        print(path)
+        log.info(path)
 
 
 def my_callback(context, path, path_sentinel_pair):
@@ -30,22 +29,21 @@ def my_callback(context, path, path_sentinel_pair):
     add_path_to_exclusion_file(path)
 
 
-def scan(start_path, context):
+def scan(context, start_path):
     create_app_dir()
     clear_exclusion_file()
     scan_tree(context, start_path, Config().exclusion_path_sentinels, my_callback)
 
 
 def search(context, start_path):
-    print(f"Searching for exclusions in: {start_path}")
+    if context.v > 0:
+        print(f"Searching for exclusions in: {start_path}")
     log.info(f"Searching for exclusions in: {start_path}")
 
-    if context.v == 0:
-        scan_tree(context, start_path, Config().exclusion_path_sentinels, print_path)
-    else:
-        scan_tree(context, start_path, Config().exclusion_path_sentinels, print_path_with_size)
+    scan_tree(context, start_path, Config().exclusion_path_sentinels, print_path)
+    if context.v > 0:
         print(f"Total size of excluded paths: {humanize.naturalsize(get_total_size_of_excluded_path(), binary=True)}")
-        log.info(f"Total size of excluded paths: {humanize.naturalsize(get_total_size_of_excluded_path(), binary=True)}")
+    log.info(f"Total size of excluded paths: {humanize.naturalsize(get_total_size_of_excluded_path(), binary=True)}")
 
 
 def get_total_size_of_excluded_path():
@@ -63,4 +61,4 @@ def print_config():
 
 
 if __name__ == "__main__":
-    scan("~/tmp", Namespace(v=0))
+    scan(Namespace(v=0), "~/tmp")

@@ -29,7 +29,7 @@ if __name__ == '__main__':
     if args.command == 'search':
         search(args, args.start_path)
     elif args.command == 'scan':
-        scan(args.start_path, args)
+        scan(args, args.start_path)
     elif args.command == 'size':
         print(f'Total size of excluded paths: {humanize.naturalsize(get_total_size_of_excluded_path(), binary=True)}')
     elif args.command == 'config':
