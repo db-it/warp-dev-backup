@@ -12,7 +12,7 @@ def build_parser() -> ArgumentParser:
     argpar = argparse.ArgumentParser(description='Automatic exclusion of development paths from Time Machine backups')
 
     argpar.add_argument('command', choices=['search', 'scan', 'size', 'config'], help="Command")
-    argpar.add_argument('--path', '-p', dest='start_path', help="Start path")
+    argpar.add_argument('--path', '-p', dest='start_path', default='~/', help="Start path")
 
     argpar.add_argument('-v', action='count', default=1, help='verbose level')
     argpar.add_argument('-q', '--quiet', dest='quiet', action='store_true', default=False,
