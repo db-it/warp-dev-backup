@@ -33,6 +33,10 @@ class Config:
             user_exclusion_path_sentinels = []
         return self.settings['exclusion_path_sentinels'] + user_exclusion_path_sentinels
 
+    @property
+    def exclusion_path_file(self):
+        return self.settings['exclusion_path_file']
+
     def get_user_settings(self):
         return self.settings['user'] if 'user' in self.settings else {}
 
