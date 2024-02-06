@@ -66,5 +66,6 @@ class Config:
             ],
             'exclusion_path_sentinels': [
                 {'sentinel': 'pom.xml', 'path': 'target'},
+                {'sentinel': 'pom.xml', 'path': 'node'},
             ]
         }
