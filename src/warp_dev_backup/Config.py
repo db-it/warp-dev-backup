@@ -38,8 +38,12 @@ class Config:
         return self.settings['exclusion_path_sentinels'] + user_exclusion_path_sentinels
 
     @property
-    def exclusion_path_file(self):
-        return self.settings['exclusion_path_file']
+    def treescan_skip_dirs(self):
+        try:
+            treescan_skip_dirs = self.get_user_settings()['treescan_skip_dirs']
+        except KeyError:
+            treescan_skip_dirs = []
+        return self.settings['treescan_skip_dirs'] + treescan_skip_dirs
 
     def get_user_settings(self):
         return self.settings['user'] if 'user' in self.settings else {}
@@ -50,13 +54,17 @@ class Config:
 
     def _get_app_settings(self):
         return {
-            "exclusion_path_file": os.path.join(self.app_dir, "excluded_paths")
+            'exclusion_path_file': os.path.join(self.app_dir, 'excluded_paths')
         }
 
     @staticmethod
     def _get_default_user_config():
         return {
-            "exclusion_path_sentinels": [
-                {"sentinel": "pom.xml", "path": "target"}
+            'treescan_skip_dirs': [
+                'Library',
+                '.Trash',
+            ],
+            'exclusion_path_sentinels': [
+                {'sentinel': 'pom.xml', 'path': 'target'},
             ]
         }
