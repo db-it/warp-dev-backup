@@ -27,8 +27,7 @@ def print_path(context: AppContext, path, path_sentinel_pair):
         log.info(path)
 
 
-# TODO rename to exclude_path
-def my_callback(context: AppContext, path, path_sentinel_pair):
+def exclude_path(context: AppContext, path, path_sentinel_pair):
     context.total_excluded_size += os.path.getsize(path)
     context.total_excluded_paths += 1
     TMUtil.exclude_path(context, path)
@@ -38,7 +37,7 @@ def my_callback(context: AppContext, path, path_sentinel_pair):
 def scan(context: AppContext, start_path):
     create_app_dir()
     clear_exclusion_file()
-    scan_tree(context, start_path, Config().exclusion_path_sentinels, my_callback)
+    scan_tree(context, start_path, Config().exclusion_path_sentinels, exclude_path)
 
 
 def search(context: AppContext, start_path):
