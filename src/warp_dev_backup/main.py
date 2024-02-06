@@ -17,7 +17,7 @@ log = logging.getLogger(__name__)
 
 def print_path(context: AppContext, path, path_sentinel_pair):
     if context.cli_args.v > 0:
-        path_size = os.path.getsize(path)
+        path_size = get_size(path)
         context.total_excluded_paths += 1
         context.total_excluded_size += path_size
         print(f"{path_size}\t{path}")
@@ -51,6 +51,24 @@ def search(context: AppContext, start_path):
               f' total size: {humanize.naturalsize(context.total_excluded_size, binary=True)}')
     log.info(f'Excluded paths: {context.total_excluded_paths},'
              f' total size: {humanize.naturalsize(context.total_excluded_size, binary=True)}')
+
+
+def get_size(path='.'):
+    if os.path.isfile(path):
+        return os.path.getsize(path)
+    elif os.path.isdir(path):
+        return get_dir_size(path)
+
+
+def get_dir_size(path='.'):
+    total = 0
+    with os.scandir(path) as it:
+        for entry in it:
+            if entry.is_file():
+                total += entry.stat().st_size
+            elif entry.is_dir():
+                total += get_dir_size(entry.path)
+    return total
 
 
 def get_total_size_of_excluded_path():
