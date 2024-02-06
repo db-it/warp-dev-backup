@@ -11,3 +11,4 @@ def scan_tree(context: AppContext, start_path, exclusion_path_sentinels, callbac
         for item in exclusion_path_sentinels:
             if item["sentinel"] in files and item["path"] in dirs:
                 callback(context, os.path.join(root, item["path"]), item)
+                dirs.remove(item["path"])
