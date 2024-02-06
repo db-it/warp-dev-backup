@@ -26,6 +26,10 @@ class Config:
         return os.path.join(self.app_dir, 'config.yml')
 
     @property
+    def exclusion_path_file(self):
+        return self.settings['exclusion_path_file']
+
+    @property
     def exclusion_path_sentinels(self):
         try:
             user_exclusion_path_sentinels = self.get_user_settings()['exclusion_path_sentinels']
