@@ -2,6 +2,8 @@ import logging
 import re
 import subprocess
 
+from warp_dev_backup.AppContext import AppContext
+
 
 class TMUtil:
 
@@ -14,10 +16,10 @@ class TMUtil:
         return match
 
     @classmethod
-    def exclude_path(cls, path, context):
+    def exclude_path(cls, context: AppContext, path):
         if cls.path_is_excluded(path):
             logging.info(f"Path is already excluded: {path}")
-            if context.v > 0:
+            if context.cli_args.v > 0:
                 print(f"Path is already excluded: {path}")
         else:
             result = subprocess.run(['tmutil', 'addexclusion', path], stdout=subprocess.PIPE)

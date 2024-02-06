@@ -4,6 +4,7 @@ from argparse import ArgumentParser
 
 import humanize
 
+from warp_dev_backup.AppContext import AppContext
 from warp_dev_backup.main import scan, search, get_total_size_of_excluded_path, print_config
 
 
@@ -23,13 +24,17 @@ def build_parser() -> ArgumentParser:
 if __name__ == '__main__':
     parser = build_parser()
     args = parser.parse_args(sys.argv[1:])
+
+    context = AppContext()
+    context.cli_args = args
+
     if args.quiet:
         args.v = 0
 
     if args.command == 'search':
-        search(args, args.start_path)
+        search(context, args.start_path)
     elif args.command == 'scan':
-        scan(args, args.start_path)
+        scan(context, args.start_path)
     elif args.command == 'size':
         print(f'Total size of excluded paths: {humanize.naturalsize(get_total_size_of_excluded_path(), binary=True)}')
     elif args.command == 'config':
