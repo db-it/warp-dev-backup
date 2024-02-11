@@ -65,7 +65,7 @@ class Config:
                 '.Trash',
             ],
             'exclusion_path_sentinels': [
-                {'sentinel': 'pom.xml', 'path': 'target'},
-                {'sentinel': 'pom.xml', 'path': 'node'},
+                {'sentinel': 'pom.xml', 'dir': 'target'},
+                {'sentinel': 'pom.xml', 'dir': 'node'},
             ]
         }

@@ -12,7 +12,7 @@ def test_should_invoke_callback_with_params():
     context = AppContext()
     config = MagicMock(spec=Config)
     config.exclusion_path_sentinels = [
-        {'sentinel': 'pyproject.toml', 'path': 'venv'},
+        {'sentinel': 'pyproject.toml', 'dir': 'venv'},
     ]
     start_path = '/dev'
     mock_callback = Mock()
@@ -27,7 +27,7 @@ def test_should_invoke_callback_with_params():
     assert mock_callback.call_args == call(
         context,
         '/dev/python-project/venv',
-        {'sentinel': 'pyproject.toml', 'path': 'venv'}
+        {'sentinel': 'pyproject.toml', 'dir': 'venv'}
     )
 
 
@@ -40,7 +40,7 @@ def test_should_invoke_callback_on_sentinel_match_by_regex(sentinel_files):
     context = AppContext()
     config = MagicMock(spec=Config)
     config.exclusion_path_sentinels = [
-        {'sentinel': r'pyproject.toml|setup.[py|cfg]', 'path': 'venv'},
+        {'sentinel': r'pyproject.toml|setup.[py|cfg]', 'dir': 'venv'},
     ]
     start_path = '/dev'
     mock_callback = Mock()
@@ -55,7 +55,7 @@ def test_should_invoke_callback_on_sentinel_match_by_regex(sentinel_files):
     assert mock_callback.call_args == call(
         context,
         '/dev/python-project/venv',
-        {'sentinel': r'pyproject.toml|setup.[py|cfg]', 'path': 'venv'},
+        {'sentinel': r'pyproject.toml|setup.[py|cfg]', 'dir': 'venv'},
     )
 
 
@@ -63,7 +63,7 @@ def test_should_not_invoke_callback_on_non_existent_sentinel_or_dir():
     context = AppContext()
     config = MagicMock(spec=Config)
     config.exclusion_path_sentinels = [
-        {'sentinel': r'pyproject.toml|setup.[py|cfg]', 'path': 'venv'},
+        {'sentinel': r'pyproject.toml|setup.[py|cfg]', 'dir': 'venv'},
     ]
     start_path = '/dev'
     mock_callback = Mock()
