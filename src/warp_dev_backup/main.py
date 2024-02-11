@@ -35,17 +35,19 @@ def exclude_path(context: AppContext, path, path_sentinel_pair):
 
 
 def scan(context: AppContext, start_path):
+    config = Config()
     create_app_dir()
     clear_exclusion_file()
-    scan_tree(context, start_path, Config().exclusion_path_sentinels, exclude_path)
+    scan_tree(context, config, start_path, exclude_path)
 
 
 def search(context: AppContext, start_path):
+    config = Config()
     if context.cli_args.v > 0:
         print(f'Searching for exclusions in: {start_path}')
     log.info(f'Searching for exclusions in: {start_path}')
 
-    scan_tree(context, start_path, Config().exclusion_path_sentinels, print_path)
+    scan_tree(context, config, start_path, print_path)
     if context.cli_args.v > 0:
         print(f'Excluded paths: {context.total_excluded_paths},'
               f' total size: {humanize.naturalsize(context.total_excluded_size, binary=True)}')
