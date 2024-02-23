@@ -8,7 +8,7 @@ permissions:
 name: Release
 jobs:
   build:
-    name: Create Release
+    name: Build release assets
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -36,18 +36,26 @@ jobs:
           tag: ${{ github.ref }}
           repo_token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Generate Hashes
+  hash:
+    name: Generate release asset checksums
+    runs-on: ubuntu-latest
+    steps:
+      - name: Generate checksums
         uses: MCJack123/ghaction-generate-release-hashes@v4
         with:
           hash-type: sha256
-          file-name: hashes.txt
+          file-name: checksums.txt
+          get-assets: true
 
-      # https://github.com/svenstaro/upload-release-action
-      - name: Upload Hashes to release
+      - name: List checksum file
+        run: ls -la
+
+      - name: Upload checksum file to release
+        # https://github.com/svenstaro/upload-release-action
         uses: svenstaro/upload-release-action@v2
         with:
-          file: hashes.txt
+          file: checksums.txt
           overwrite: true
-          asset_name: Files-SHA256-Hashes.txt
+          asset_name: checksums_SHA256.txt
           tag: ${{ github.ref }}
           repo_token: ${{ secrets.GITHUB_TOKEN }}
