@@ -1,7 +1,11 @@
 # warp-dev-backup
 
+## Usage
 
+```shell
+# Search for directories to be excluded from backup and print them on the console
+wdb search -p /start/path
 
-## Homebrew create formula
-
-* [https://therdnotes.com/packaging-homebrew-formula](https://therdnotes.com/packaging-homebrew-formula)
+# Start scan from start path and exclude found directories from backup
+wdb scan -p /start/path
+```
