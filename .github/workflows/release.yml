@@ -42,7 +42,7 @@ jobs:
         with:
           hash-type: sha256
           file-name: checksums.txt
-          get-assets: true
+          get-assets: false
 
       - name: List checksum file
         run: ls -la
