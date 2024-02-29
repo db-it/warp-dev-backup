@@ -26,10 +26,20 @@ jobs:
       - name: Build package
         run: python -m build
 
+      - name: Generate Asset Hashes
+        # https://github.com/jmgilman/actions-generate-checksum
+        uses: jmgilman/actions-generate-checksum@v1
+        with:
+          patterns: dist/*
+          method: sha256
+          output: checksums.txt
+
       - name: Create Github Release
         id: github_release
         uses: softprops/action-gh-release@v1
         with:
-          files: dist/*
+          files: |
+            dist/*
+            checksums.txt
           fail_on_unmatched_files: true
           token: ${{ secrets.GITHUB_TOKEN }}
