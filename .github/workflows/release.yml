@@ -1,6 +1,7 @@
 on:
-  release:
-    types: [published]
+  push:
+    tags:
+      - 'v*'
 
 permissions:
   contents: write
@@ -8,7 +9,7 @@ permissions:
 name: Release
 jobs:
   build:
-    name: Build release assets
+    name: Create Release
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -20,39 +21,15 @@ jobs:
           python-version: '3.11'
 
       - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          python -m pip install build
+        run: python -m pip install --upgrade pip build
 
       - name: Build package
         run: python -m build
 
-      # https://github.com/svenstaro/upload-release-action
-      - name: Upload distribution packages to release
-        uses: svenstaro/upload-release-action@v2
+      - name: Create Github Release
+        id: github_release
+        uses: softprops/action-gh-release@v1
         with:
-          file_glob: true
-          file: dist/*
-          overwrite: true
-          tag: ${{ github.ref }}
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Generate checksums
-        uses: MCJack123/ghaction-generate-release-hashes@v4
-        with:
-          hash-type: sha256
-          file-name: checksums.txt
-          get-assets: false
-
-      - name: List checksum file
-        run: ls -la
-
-      - name: Upload checksum file to release
-        # https://github.com/svenstaro/upload-release-action
-        uses: svenstaro/upload-release-action@v2
-        with:
-          file: checksums.txt
-          overwrite: true
-          asset_name: checksums_SHA256.txt
-          tag: ${{ github.ref }}
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          files: dist/*
+          fail_on_unmatched_files: true
+          token: ${{ secrets.GITHUB_TOKEN }}
