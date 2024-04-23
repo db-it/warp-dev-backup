@@ -1,0 +1,5 @@
+user:
+  start_path: ~/custom/test/start/path
+  exclusion_path_sentinels:
+    - dir: node_modules
+      sentinel: package.json

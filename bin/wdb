@@ -1,0 +1,60 @@
+#!/usr/bin/env python3
+import os
+import pathlib
+import sys
+from argparse import ArgumentParser
+
+import humanize
+
+from warp_dev_backup.AppContext import AppContext
+from warp_dev_backup.Config import Config
+from warp_dev_backup.commands import Command
+
+
+def build_parser() -> ArgumentParser:
+    import argparse
+    argpar = argparse.ArgumentParser(description='Automatic exclusion of development paths from Time Machine backups')
+
+    argpar.add_argument('command', choices=['search', 'scan', 'size', 'config'], help="Command")
+    argpar.add_argument('--path', '-p', dest='start_path', help="Start path")
+    argpar.add_argument('--config', type=pathlib.Path, help='Path to config file')
+
+    argpar.add_argument('-v', action='count', default=1, help='verbose level')
+    argpar.add_argument('-q', '--quiet', dest='quiet', action='store_true', default=False,
+                        help='Give no output. Has precedence over verbose.')
+    return argpar
+
+
+def bootstrap(config: Config):
+    os.makedirs(config.app_dir.expanduser(), exist_ok=True)
+
+
+def main(raw_args):
+    parser = build_parser()
+    args = parser.parse_args(raw_args)
+
+    config = Config(args.config)
+    context = AppContext(config, args)
+    bootstrap(config)
+    command = Command(context)
+
+    if args.quiet:
+        args.v = 0
+
+    if args.v > 1:
+        print(args)
+        print(f'Using config file {config.config_file}')
+        print("")
+
+    if args.command == 'search':
+        command.search()
+    elif args.command == 'scan':
+        command.scan()
+    elif args.command == 'size':
+        print(f'Total size of excluded paths: {humanize.naturalsize(command.get_total_size_of_excluded_path(), binary=True)}')
+    elif args.command == 'config':
+        command.print_config(config)
+
+
+if __name__ == '__main__':
+    main(sys.argv[1:])
