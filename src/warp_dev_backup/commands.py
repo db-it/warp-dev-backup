@@ -1,3 +1,4 @@
+import logging
 import os
 
 import humanize
@@ -8,6 +9,8 @@ from warp_dev_backup import AppContext
 from warp_dev_backup.Config import Config
 from warp_dev_backup.tmutil import TMUtil
 from warp_dev_backup.treescan import scan_tree
+
+logger = logging.getLogger(__name__)
 
 
 class Command:
@@ -21,9 +24,9 @@ class Command:
             path_size = Command.__get_size(path)
             context.total_excluded_paths += 1
             context.total_excluded_size += path_size
-            print(f"{humanize.naturalsize(path_size)}\t{path}")
+            logger.info(f"{humanize.naturalsize(path_size, gnu=True):>10}\t{path}")
         else:
-            print(path)
+            logger.info(path)
 
     @staticmethod
     def exclude_path(context: AppContext, path, path_sentinel_pair):
@@ -41,12 +44,12 @@ class Command:
         start_path = self.__get_start_path(self.context)
 
         if self.context.cli_args.v >= 1:
-            print(f'Searching for exclusions in: {start_path}')
+            logger.info(f'Searching for exclusions in: {start_path}')
 
         scan_tree(self.context, start_path, self.print_path)
         if self.context.cli_args.v >= 1:
-            print(f'Excluded paths: {self.context.total_excluded_paths},'
-                  f' total size: {humanize.naturalsize(self.context.total_excluded_size, binary=True)}')
+            logger.info(f'Excluded paths: {self.context.total_excluded_paths}')
+            logger.info(f'Total excluded size: {humanize.naturalsize(self.context.total_excluded_size, gnu=True)}')
 
     @staticmethod
     def get_total_size_of_excluded_path():
@@ -60,7 +63,7 @@ class Command:
 
     @staticmethod
     def print_config(config: Config):
-        print(yaml.dump(config.settings))
+        logger.info(yaml.dump(config.settings))
 
     @staticmethod
     def __get_size(path='.'):

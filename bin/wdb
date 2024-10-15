@@ -8,6 +8,7 @@ import humanize
 
 from warp_dev_backup.AppContext import AppContext
 from warp_dev_backup.Config import Config
+from warp_dev_backup.LoggerFactory import LoggerFactory
 from warp_dev_backup.commands import Command
 
 
@@ -17,6 +18,8 @@ def build_parser() -> ArgumentParser:
 
     argpar.add_argument('command', choices=['search', 'scan', 'size', 'config'], help="Command")
     argpar.add_argument('--path', '-p', dest='start_path', help="Start path")
+    argpar.add_argument('--service', dest='service', action='store_true', default=False,
+                        help="Run in service mode. This will pass output to console and logfiles.")
     argpar.add_argument('--config', type=pathlib.Path, help='Path to config file')
 
     argpar.add_argument('-v', action='count', default=1, help='verbose level')
@@ -26,7 +29,8 @@ def build_parser() -> ArgumentParser:
 
 
 def bootstrap(config: Config):
-    os.makedirs(config.app_dir.expanduser(), exist_ok=True)
+    os.makedirs(config.app_dir, exist_ok=True)
+    os.makedirs(config.log_dir, exist_ok=True)
 
 
 def main(raw_args):
@@ -41,10 +45,21 @@ def main(raw_args):
     if args.quiet:
         args.v = 0
 
+    log_level_name = os.getenv('WDB_LOG_LEVEL', 'INFO')
+    if args.v == 0:
+        log_level_name = 'WARNING'
     if args.v > 1:
-        print(args)
-        print(f'Using config file {config.config_file}')
-        print("")
+        log_level_name = 'DEBUG'
+
+    debug = os.getenv('WDB_DEBUG', False)
+    if args.service:
+        logger_config = LoggerFactory('warp_dev_backup', log_level_name, debug, logfile_path=config.log_file)
+    else:
+        logger_config = LoggerFactory('warp_dev_backup', log_level_name, debug)
+
+    logger_config.logger.debug(f'Commandline args: {args}')
+    logger_config.logger.debug(f'Config file {config.config_file}')
+    logger_config.logger.debug('')
 
     if args.command == 'search':
         command.search()

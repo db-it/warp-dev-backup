@@ -11,14 +11,22 @@ class TestConfig:
 
         assert config.config_file.as_posix() == '/myconfig/file'
 
+    @patch('warp_dev_backup.Config.Path.expanduser', Mock(return_value=Path('~/.warp-dev-backup')))
     def test_config_file__returns_default_path(self):
         config = Config()
 
         assert config.config_file.as_posix() == '~/.warp-dev-backup/config.yml'
 
+    def test_log_file__returns_default_log_file_path(self):
+        config = Config()
+
+        assert config._config['log_dir'] == '~/Library/Logs/warp-dev-backup'
+
+    @patch('warp_dev_backup.Config.Path.expanduser', Mock(return_value=Path('~/.warp-dev-backup')))
     def test_app_dir(self):
         assert Config().app_dir == Path('~/.warp-dev-backup')
 
+    @patch('warp_dev_backup.Config.Path.expanduser', Mock(return_value=Path('~/.warp-dev-backup')))
     def test_settings__returns_default_user_settings(self):
         config = Config()
         with patch.object(Config, 'exclusion_path_sentinels', [
@@ -27,7 +35,7 @@ class TestConfig:
             sentinels = config.exclusion_path_sentinels
 
         assert sentinels == [{'dir': 'target', 'sentinel': 'pom.xml'}]
-        assert config.exclusion_path_file.endswith('.warp-dev-backup/excluded_paths')
+        assert config.exclusion_path_file == Path('~/.warp-dev-backup/excluded_paths')
 
     def test_start_path__returns_default_user_settings_start_path(self, config4test):
         config = config4test(config_file='/non/existent/configfile')
@@ -39,7 +47,8 @@ class TestConfig:
 
         assert config.start_path == Path('~/custom/test/start/path')
 
-    @patch("os.path.exists", Mock(return_value=True))
+    @patch('warp_dev_backup.Config.Path.expanduser', Mock(return_value=Path('~/.warp-dev-backup')))
+    @patch.object(Path, 'exists', Mock(return_value=True))
     @patch.object(Config, '_read_config_file', autospec=True)
     def test_settings__user_config_file_only_overrides_user_defaults(self, mock_read_config_file: Mock):
         mock_read_config_file.return_value = {
@@ -49,7 +58,7 @@ class TestConfig:
 
         settings = Config().settings
 
-        assert settings['exclusion_path_file'].endswith('.warp-dev-backup/excluded_paths')
+        assert settings['exclusion_path_file'] == Path('~/.warp-dev-backup/excluded_paths')
         assert settings['exclusion_path_sentinels'] == [{'dir': 'node_modules', 'sentinel': 'package.json'}]
 
     @patch("os.path.exists", Mock(return_value=False))
