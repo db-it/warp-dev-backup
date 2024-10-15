@@ -1,4 +1,3 @@
-import os.path
 from pathlib import Path
 
 import yaml
@@ -31,11 +30,19 @@ class Config:
         return self._config_file
 
     @property
-    def app_dir(self) -> Path:
-        return Path('~/.warp-dev-backup')
+    def log_dir(self):
+        return Path(self.settings['log_dir']).expanduser()
 
     @property
-    def exclusion_path_file(self):
+    def log_file(self):
+        return self.log_dir / 'wdb.log'
+
+    @property
+    def app_dir(self) -> Path:
+        return Path('~/.warp-dev-backup').expanduser()
+
+    @property
+    def exclusion_path_file(self) -> Path:
         return self.settings['exclusion_path_file']
 
     @property
@@ -68,13 +75,14 @@ class Config:
 
     def _get_app_settings(self):
         return {
-            'exclusion_path_file': os.path.join(self.app_dir, 'excluded_paths')
+            'exclusion_path_file': self.app_dir / 'excluded_paths'
         }
 
     @staticmethod
     def _get_default_user_config():
         return {
             'start_path': '~/',
+            'log_dir': '~/Library/Logs/warp-dev-backup',
             'exclusion_path_sentinels': [
                 {'sentinel': 'pom.xml', 'dir': 'target'},  # Maven
                 {'sentinel': 'Cargo.toml', 'dir': 'target'},  # Cargo (Rust)
