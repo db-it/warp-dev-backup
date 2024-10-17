@@ -77,9 +77,9 @@ class Command:
         total = 0
         with os.scandir(path) as it:
             for entry in it:
-                if entry.is_file():
-                    total += entry.stat().st_size
-                elif entry.is_dir():
+                if entry.is_file(follow_symlinks=False):
+                    total += entry.stat(follow_symlinks=False).st_size
+                elif entry.is_dir(follow_symlinks=False):
                     total += Command.__get_dir_size(entry.path)
         return total
 
