@@ -57,7 +57,7 @@ class Command:
         excluded_paths = storage.read_exclusion_file()
 
         for path in excluded_paths:
-            path_size = os.path.getsize(path)
+            path_size = Command.__get_size(path)
             total_size += path_size
         return total_size
 
