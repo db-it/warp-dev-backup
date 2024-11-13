@@ -76,3 +76,29 @@ def test_should_not_invoke_callback_on_non_existent_sentinel_or_dir(context):
         scan_tree(context, start_path, mock_callback)
 
     assert mock_callback.call_count == 0
+
+
+@pytest.mark.skip('This test does not make much sense, because the tree scanning is mocked.'
+                  ' So the exclusion mechanism is part of the mock.')
+def test_should_not_invoke_callback_for_skipped_dirs(context):
+    config = MagicMock(spec=Config)
+    config.exclusion_path_sentinels = [
+        {'sentinel': r'pyproject.toml|setup.[py|cfg]', 'dir': 'venv'},
+    ]
+    config.treescan_skip_dirs = ['.skipmedir']
+    context = context(config)
+    start_path = '/'
+    mock_callback = Mock()
+
+    with mock.patch('os.walk') as mock_walk:
+        mock_walk.return_value = [
+            ['/', ['.skipmedir', 'dev'], []],
+            # ['/.skipmedir', ['venv'], ['pyproject.toml']],
+            ['/dev', ['python-project'], []],
+            ['/dev/python-project', ['venv', 'dist'], ['setup.py']],
+        ]
+        scan_tree(context, start_path, mock_callback)
+
+    assert mock_callback.call_args_list == [
+        call(context, '/dev/python-project/venv', {'sentinel': 'pyproject.toml|setup.[py|cfg]', 'dir': 'venv'})
+    ]
